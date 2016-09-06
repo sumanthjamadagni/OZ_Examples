@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import matplotlib
 from itertools import cycle
 
-colors= ['red', 'green', 'black', 'cyan', 'blue'] # 'magenta']
-colorcycler = cycle(colors)
-
+colors= ['red', 'green', 'black', 'cyan', 'blue', 'magenta', 'black']
+colorcycler_liq = cycle(colors)
+colorcycler_vap = cycle(colors)
  
 
 FS = 18
@@ -31,8 +31,8 @@ Fig2.set_ylabel('T', fontsize=FS)
 
 
 for T in T_Str:
-    c = next(colorcycler)
-    print "c = ", c
+    lc = next(colorcycler_liq)
+    print "lc = ", lc
     FileName = 'T' + T + '-Liq.dat'
     Data = np.loadtxt(FileName, skiprows=1)
     rho = Data[:,1]
@@ -47,8 +47,8 @@ for T in T_Str:
     
     Sk0_Fit = SkF.Fit_Sk0_PowerLaw(params_opt, rho, branch)
 
-    Fig1.plot(rho, Sk0, linestyle='None', linewidth=2, marker='d', label = T + ',liq')
-    Fig1.plot(rho, Sk0, linestyle='-', linewidth=2)
+    Fig1.plot(rho, Sk0, linestyle='None', linewidth=2, color=lc, marker='d', label = T + ',liq')
+    Fig1.plot(rho, Sk0, linestyle='-', linewidth=2, color=lc)
 
     print T, params_opt
 
@@ -59,8 +59,8 @@ Spinodal = []
 T_float = []
 branch='left'
 for T in T_Str:
-    c = next(colorcycler)
-    print "c = ", c
+    lc = next(colorcycler_vap)
+    print "lc = ", lc
     FileName = 'T' + T + '-Vap.dat'
     Data = np.loadtxt(FileName, skiprows=1)
     rho = Data[:,1]
@@ -75,8 +75,8 @@ for T in T_Str:
     
     Sk0_Fit = SkF.Fit_Sk0_PowerLaw(params_opt, rho, branch)
 
-    Fig1.plot(rho, Sk0, linestyle='None', linewidth=2, marker='d', label = T + ',vap')
-    Fig1.plot(rho, Sk0_Fit, linestyle='-', linewidth=2)
+    Fig1.plot(rho, Sk0, linestyle='None', color=lc, linewidth=2, marker='d', label = T + ',vap')
+    Fig1.plot(rho, Sk0_Fit, linestyle='-', linewidth=2, color=lc)
 
     print T, params_opt
 
@@ -91,4 +91,4 @@ Fig1.legend(loc='best', ncol=2)
 Fig.tight_layout()
 plt.show()
 
-Fig.savefig('LJ_Spinodal.pdf')
+#Fig.savefig('LJ_Spinodal.pdf')
