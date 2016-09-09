@@ -1,0 +1,1 @@
+Resutls for U(r) = 4*eps*(sig/r)^m
