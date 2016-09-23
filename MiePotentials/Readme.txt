@@ -1,5 +1,7 @@
 Results for generalized potentials of the form: 
-U(r) = 4* eps * [(sig/r)**m - (sig/r)**n]. 
+U(r) = 4 *(sig/r)**m - 4 * eps* (sig/r)**n 
+
+NOTE That epsilon is only multiplying the 'attractive' branch. So setting epsilon to 0 will reduce this potential to a purely repulsive one, not an ideal gas!
 
 Python and shell script files to generate the results for arbitraty potentials are included. 
 
