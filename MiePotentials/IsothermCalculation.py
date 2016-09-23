@@ -47,9 +47,6 @@ Ur_ref = Potentials.WCAPotential(r,sig=sig, eps=1.0, m=m, n=n)
 Ur = Potentials.LJPotential(r,sig=sig, eps=1.0, m=m, n=n)
 
 
-
-
-
 #---------
 cr_guess = None
 
@@ -62,14 +59,14 @@ i = 0
 #FigSK1.set_ylabel('S(k)', fontsize=FS)
 #FigSK1.set_xscale('log', fontsize=FS)
 
-if eps_crit < 0.15:
-    print "Very low critical attraction (or very high Tc). Are you sure?"
-    print "If so, change the starting point of the eps_array"
-    sys.exit()
+#if eps_crit < 0.15:
+#    print "Very low critical attraction (or very high Tc). Are you sure?"
+#    print "If so, change the starting point of the eps_array"
+#    sys.exit()
 
-delta_eps = 0.05
+delta_eps = 0.02
 #Supercritical isotherms for eps < eps_crit.  
-eps_array = np.arange(eps_crit * 0.80, 2 * eps_crit, delta_eps) #epsilon = 0.15 corresponds to very high temperatures. 
+eps_array = np.arange(eps_crit * 0.80, 2 * eps_crit, delta_eps) 
 T_array = 1.0/eps_array
 nT = len(T_array)
 
