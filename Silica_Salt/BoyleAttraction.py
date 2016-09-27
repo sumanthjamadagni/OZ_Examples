@@ -11,13 +11,13 @@ matplotlib.rc('ytick', labelsize=FS)
 
 import OZ.Potentials as Pot
 
-def ErrorSq(NaCl_WtPerc, r, sig=1.0, eps=1.0, m=50, n=18, Q=1e4, d=40):
+def ErrorSq(NaCl_WtPerc, r, sig=1.0, eps=1.0, m=50, n=18, Q=1e4, d=40, PotType='v2'):
 
     Ur, B2 = Potential(NaCl_WtPerc, r, sig=sig, eps=eps, m=m, n=n, Q=Q, d=d)
 
     return B2**2 
 
-def Potential(NaCl_WtPerc, r, sig=1.0, eps=1.0, m=50, n=18, Q=1e4, d=40):
+def Potential(NaCl_WtPerc, r, sig=1.0, eps=1.0, m=50, n=18, Q=1e4, d=40, PotType='v2'):
 
     NaClMolWt = 58.0
     NaCl_Conc = NaCl_WtPerc/100.0 * 10.0 / NaClMolWt #mol/Liter
@@ -27,10 +27,13 @@ def Potential(NaCl_WtPerc, r, sig=1.0, eps=1.0, m=50, n=18, Q=1e4, d=40):
     
     ChargeDensity_nmsq = Q/1e6 #/nm^2
     Area = np.pi * d**2
-    Z = ChargeDensity_nmsq * Area
+    Z = np.round(ChargeDensity_nmsq * Area,2)
     A = (Z**2 * l_bjerrum)/ (1 + 0.50/l_debye)**2
-    
-    Ur = Pot.SALRPotential_v2(r, sig=sig, eps=eps, A=A, m=m, n=n)
+    if PotType == 'v1':
+        Ur = Pot.SALRPotential_v1(r, sig=sig, eps=eps, A=A, m=m, n=n, d=l_debye)
+    else:
+        Ur = Pot.SALRPotential_v2(r, sig=sig, eps=eps, A=A, m=m, n=n, d=l_debye)
+        
     B2 = Pot.CalcB2(r,Ur)
 
     return Ur, B2
@@ -48,8 +51,9 @@ d = 40.0 #nm, colloid diameter
 sig=1.0
 m = 50; n = 18
 Q = 1e4
+PotType='v2'
 
-eps_array = np.linspace(2.0,4.0,20)
+eps_array = np.linspace(2.0,4.0,21)
 
 
 dr = 0.02
@@ -63,14 +67,14 @@ for q in Q:
     eps_converged = []
     for eps in eps_array:
         try:
-            cs_wt_perc  = newton(ErrorSq, 0.50, args=(r, sig, eps, m, n, q, d), tol=1.48e-08, maxiter=50)
+            cs_wt_perc  = newton(ErrorSq, 0.50, args=(r, sig, eps, m, n, q, d, PotType), tol=1.48e-08, maxiter=50)
             eps_converged.append(eps)
             Cs_Boyle.append(cs_wt_perc)
         except RuntimeError:
             cs_wt_perc = -1.0
         
         if cs_wt_perc > 0.0:
-            Ur, B2 = Potential(cs_wt_perc, r, sig=sig, eps=eps, m=m, n=n, Q=q, d=d)
+            Ur, B2 = Potential(cs_wt_perc, r, sig=sig, eps=eps, m=m, n=n, Q=q, d=d, PotType=PotType)
             print q/1e6, eps, cs_wt_perc, B2
 
     labelstr = 'Q =' + str(q/1e6) + " e/nm$^2$"
@@ -79,7 +83,7 @@ for q in Q:
 
 
 
-FigCs1.legend(loc='upper right')
+FigCs1.legend(loc='best')
 
 FigCs.savefig('Cs_Boyle.pdf')
 plt.show()
