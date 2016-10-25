@@ -145,3 +145,41 @@ fig_Sk = fig_grSk.add_subplot(122)
 fig_Sk.set_xlabel('$k/2\pi$', fontsize=FS)
 fig_Sk.set_ylabel('$S(k)$', fontsize=FS)
 fig_Sk.set_xlim([0,25])
+
+
+
+for rho in rho_array:
+
+    print("rho = ", rho)
+    U_att = Functions.CalcU_DPD_Attractive(a,r, eps_newton, form=form)
+    dpd_att = Functions.Solve_DPD_Att(rho, a, eps_newton, form) #returns system object
+    
+    if dpd_att.g_r is None: #not converged 
+        pass 
+    else:
+        #calculate B2
+        B2 = oz.properties.second_virial_coefficient(dpd_att)
+        #Calculate pressure and internal energy
+        P, U = Calc_P_U(dpd_att) #calculate pressure and internal energy
+
+        rho_converged.append(rho)
+        P_array.append(P)
+        U_array.append(U)
+
+        #Plot g(r) and S(k)
+        fig_gr.plot(dpd_att.r, dpd_att.g_r[0,0,:] , label = "rho = " + str(rho), linewidth=2.0)
+
+        fig_Sk.plot(dpd_att.k/2.0/np.pi, dpd_att.h_k[0,0,:] , label = "rho = " + str(rho), linewidth=2.0)
+
+
+
+        
+        
+fig_P.plot(rho_converged, P_array, marker='d', color='blue')
+fig_U.plot(rho_converged, U_array, marker='d', color='blue')
+
+fig_gr.legend(loc='lower right', ncol = 2, framealpha=0.50)
+
+fig.tight_layout()
+fig_grSk.tight_layout()
+plt.show()
